@@ -17,6 +17,13 @@ var path  = require('path'),
     title = 'static  '.inverse;
 
 
+// task set was turned off in gulp.js
+if ( !config ) {
+    // do not create tasks
+    return;
+}
+
+
 // start serving files
 gulp.task('static', function ( done ) {
     var config = load(cfg),
