@@ -7,88 +7,94 @@
 
 'use strict';
 
-var path  = require('path'),
-    http  = require('http'),
-    gulp  = require('gulp'),
-    log   = require('gulp-util').log,
-    glr   = require('gulp-livereload'),
-    load  = require('require-nocache')(module),
-    cfg   = path.join(process.env.PATH_ROOT, process.env.PATH_CFG, 'static'),
-    title = 'static  '.inverse;
+var http   = require('http'),
+    glr    = require('gulp-livereload'),
+    Plugin = require('spa-gulp/lib/plugin'),
+    plugin = new Plugin({name: 'static', entry: 'serve', context: module});
 
 
-// task set was turned off in gulp.js
-if ( !config ) {
-    // do not create tasks
-    return;
-}
+// create tasks for profiles
+plugin.profiles.forEach(function ( profile ) {
+    // main entry task
+    profile.task(plugin.entry, function ( done ) {
+        var files, msInit;
 
+        // rfc 2616 compliant HTTP static file server
+        files  = new (require('node-static').Server)(process.env.PATH_APP, {cache: false});
+        msInit = +new Date();
 
-// start serving files
-gulp.task('static', function ( done ) {
-    var config = load(cfg),
-        files, msInit;
+        http.createServer(function createServer ( request, response ) {
+            request.addListener('end', function eventListenerEnd () {
+                // static files
+                files.serve(request, response, function serve ( e ) {
+                    var msCurr  = +new Date(),
+                        address = request.connection.remoteAddress || '[0.0.0.0]'.red,
+                        status  = response.statusCode === 200 ? response.statusCode.toString().green : response.statusCode.toString().yellow,
+                        msDiff;
 
-    if ( !config.active ) {
-        // just exit
-        log(title, 'task is disabled'.grey);
+                    if ( e ) {
+                        response.end();
 
-        return done();
-    }
+                        profile.notify({
+                            type: 'fail',
+                            title: plugin.entry,
+                            message: request.url
+                        });
+                    }
 
-    // rfc 2616 compliant HTTP static file server
-    files  = new (require('node-static').Server)(process.env.PATH_APP, {cache: false});
-    msInit = +new Date();
+                    if ( profile.data.logging ) {
+                        msDiff = (msCurr - msInit).toString();
+                        msDiff = msDiff.slice(0, -3) + '\t' + msDiff.substr(-3).toString().grey;
 
-    http.createServer(function createServer ( request, response ) {
-        request.addListener('end', function eventListenerEnd () {
-            // static files
-            files.serve(request, response, function serve ( e ) {
-                var msCurr  = +new Date(),
-                    address = request.connection.remoteAddress || '[0.0.0.0]'.red,
-                    status  = response.statusCode === 200 ? response.statusCode.toString().green : response.statusCode.toString().yellow,
-                    msDiff;
+                        profile.notify({
+                            info: [
+                                '',
+                                msDiff,
+                                address,
+                                e ? e.status.red : status,
+                                request.method.grey,
+                                request.url.replace(/\//g, '/'.grey)
+                            ].join('\t'),
+                            title: plugin.entry
+                            //message: request.url
+                        });
+                        //log(title, );
+                    }
+                });
+            }).resume();
+        }).listen(profile.data.port).on('listening', function eventListenerListening () {
+            var ip   = require('ip').address(),
+                msg  = 'Serve application static files ' + profile.data.target,
+                hash = new Array(msg.length + 1).join('-');
 
-                if ( e ) {
-                    response.end();
-                }
-
-                if ( config.logging ) {
-                    msDiff = (msCurr - msInit).toString();
-                    msDiff = msDiff.slice(0, -3) + '\t' + msDiff.substr(-3).toString().grey;
-
-                    log(title, [
-                        '',
-                        msDiff,
-                        address,
-                        e ? e.status.red : status,
-                        request.method.grey,
-                        request.url.replace(/\//g, '/'.grey)
-                    ].join('\t'));
-                }
+            profile.notify({
+                info: [
+                    hash,
+                    msg.bold,
+                    '\trelease: ' + ('http://' + ip + ':' + profile.data.port + '/index.html').green,
+                    '\tdevelop: ' + ('http://' + ip + ':' + profile.data.port + '/develop.html').green,
+                    hash
+                ],
+                title: plugin.entry,
+                message: msg
             });
-        }).resume();
-    }).listen(config.port).on('listening', function eventListenerListening () {
-        var ip   = require('ip').address(),
-            msg  = 'Serve application static files ' + path.join(process.env.PATH_ROOT, process.env.PATH_APP),
-            hash = new Array(msg.length + 1).join('-');
 
-        log(title, hash);
-        log(title, msg.bold);
-        log(title, '\trelease: ' + ('http://' + ip + ':' + config.port + '/index.html').green);
-        log(title, '\tdevelop: ' + ('http://' + ip + ':' + config.port + '/develop.html').green);
-        log(title, hash);
-    });
-
-    if ( config.livereload ) {
-        glr.listen({quiet: true, port: config.livereload === true ? 35729 : config.livereload});
-
-        // reload
-        gulp.watch([path.join(process.env.PATH_APP, '**', '*.{html,js,json,css}')]).on('change', function ( file ) {
-            // report
-            log('watch   '.bgCyan.black, 'reload ' + ('./' + path.relative(process.env.PATH_APP, file.path)).bold);
-            // reload
-            glr.changed(file);
         });
-    }
+
+        /*if ( profile.data.livereload ) {
+            glr.listen({quiet: true, port: profile.data.livereload === true ? 35729 : profile.data.livereload});
+
+            // reload
+            gulp.watch([path.join(process.env.PATH_APP, '**', '*.{html,js,json,css}')]).on('change', function ( file ) {
+                // report
+                log('watch   '.bgCyan.black, 'reload ' + ('./' + path.relative(process.env.PATH_APP, file.path)).bold);
+                // reload
+                glr.changed(file);
+            });
+        }*/
+    });
 });
+
+
+// public
+module.exports = plugin;
