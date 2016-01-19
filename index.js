@@ -10,6 +10,7 @@
 var http   = require('http'),
     path   = require('path'),
     util   = require('util'),
+    open   = require('open'),
     //glr    = require('gulp-livereload'),
     Plugin = require('spa-gulp/lib/plugin'),
     plugin = new Plugin({name: 'static', entry: 'serve', context: module}),
@@ -92,11 +93,6 @@ plugin.profiles.forEach(function ( profile ) {
 
         server.listen(profile.data.port);
 
-        // remove the generated file
-        profile.task('open', function () {
-            open(profile.data.target);
-        });
-
         /*if ( profile.data.livereload ) {
             glr.listen({quiet: true, port: profile.data.livereload === true ? 35729 : profile.data.livereload});
 
@@ -108,6 +104,11 @@ plugin.profiles.forEach(function ( profile ) {
                 glr.changed(file);
             });
         }*/
+    });
+
+    // open page in browser
+    profile.task('open', function () {
+        open(profile.data.target);
     });
 
     profile.task('stop', function () {
