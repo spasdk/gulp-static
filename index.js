@@ -8,77 +8,93 @@
 'use strict';
 
 var http   = require('http'),
-    glr    = require('gulp-livereload'),
+    path   = require('path'),
+    util   = require('util'),
+    //glr    = require('gulp-livereload'),
     Plugin = require('spa-gulp/lib/plugin'),
-    plugin = new Plugin({name: 'static', entry: 'serve', context: module});
+    plugin = new Plugin({name: 'static', entry: 'serve', context: module}),
+    ip     = require('ip').address();
+
+
+// rework profile
+plugin.prepare = function ( name ) {
+    var profile = this.config[name];
+
+    profile.target = profile.target.replace(/\$\{host}/g, ip);
+    profile.target = profile.target.replace(/\$\{port}/g, profile.port);
+};
 
 
 // create tasks for profiles
 plugin.profiles.forEach(function ( profile ) {
+    var srcDir = path.resolve(profile.data.source),
+        server;
+
+    // correct target
+    plugin.prepare(profile.name);
+
     // main entry task
     profile.task(plugin.entry, function ( done ) {
-        var files, msInit;
-
         // rfc 2616 compliant HTTP static file server
-        files  = new (require('node-static').Server)(process.env.PATH_APP, {cache: false});
-        msInit = +new Date();
+        var files = new (require('node-static').Server)(profile.data.source, {cache: profile.data.cache});
 
-        http.createServer(function createServer ( request, response ) {
-            request.addListener('end', function eventListenerEnd () {
+        server = http.createServer(function ( request, response ) {
+            request.addListener('end', function () {
                 // static files
-                files.serve(request, response, function serve ( e ) {
-                    var msCurr  = +new Date(),
-                        address = request.connection.remoteAddress || '[0.0.0.0]'.red,
-                        status  = response.statusCode === 200 ? response.statusCode.toString().green : response.statusCode.toString().yellow,
-                        msDiff;
+                files.serve(request, response, function serve ( error ) {
+                    var address = request.connection.remoteAddress || '[0.0.0.0]'.red,
+                        status  = response.statusCode === 200 ? response.statusCode.toString().green : response.statusCode.toString().yellow;
 
-                    if ( e ) {
+                    if ( error ) {
                         response.end();
-
-                        profile.notify({
-                            type: 'fail',
-                            title: plugin.entry,
-                            message: request.url
-                        });
                     }
 
-                    if ( profile.data.logging ) {
-                        msDiff = (msCurr - msInit).toString();
-                        msDiff = msDiff.slice(0, -3) + '\t' + msDiff.substr(-3).toString().grey;
-
-                        profile.notify({
-                            info: [
-                                '',
-                                msDiff,
-                                address,
-                                e ? e.status.red : status,
-                                request.method.grey,
-                                request.url.replace(/\//g, '/'.grey)
-                            ].join('\t'),
-                            title: plugin.entry
-                            //message: request.url
-                        });
-                        //log(title, );
-                    }
+                    // single file serving report
+                    profile.notify({
+                        type: error ? 'fail' : 'info',
+                        info: [
+                            address.replace('::ffff:', '').replace(/\./g, '.'.grey),
+                            (+new Date()).toString().substr(-3).grey,
+                            error ? error.status.toString().red : status,
+                            request.method.grey,
+                            request.url.replace(/\//g, '/'.grey)
+                        ].join('\t'),
+                        title: plugin.entry,
+                        message: error ? [request.url, '\n', error.message] : request.url
+                    });
                 });
             }).resume();
-        }).listen(profile.data.port).on('listening', function eventListenerListening () {
-            var ip   = require('ip').address(),
-                msg  = 'Serve application static files ' + profile.data.target,
-                hash = new Array(msg.length + 1).join('-');
+        });
 
+        server.on('listening', function () {
             profile.notify({
                 info: [
-                    hash,
-                    msg.bold,
-                    '\trelease: ' + ('http://' + ip + ':' + profile.data.port + '/index.html').green,
-                    '\tdevelop: ' + ('http://' + ip + ':' + profile.data.port + '/develop.html').green,
-                    hash
+                    'serve '.green + srcDir.bold + ' at '.green + profile.data.port,
+                    'entry '.green + profile.data.target.blue
                 ],
                 title: plugin.entry,
-                message: msg
+                message: util.format('serve %s\nat %s', srcDir, ip + ':' + profile.data.port)
+            });
+        });
+
+        server.on('close', done);
+
+        server.on('error', function ( error ) {
+            profile.notify({
+                type: 'fail',
+                info: error.message,
+                title: plugin.entry,
+                message: error.message
             });
 
+            done();
+        });
+
+        server.listen(profile.data.port);
+
+        // remove the generated file
+        profile.task('open', function () {
+            open(profile.data.target);
         });
 
         /*if ( profile.data.livereload ) {
@@ -92,6 +108,18 @@ plugin.profiles.forEach(function ( profile ) {
                 glr.changed(file);
             });
         }*/
+    });
+
+    profile.task('stop', function () {
+        if ( server ) {
+            profile.notify({
+                info: 'stop '.green + srcDir.bold,
+                title: 'stop',
+                message: 'stop ' + srcDir
+            });
+
+            server.close();
+        }
     });
 });
 
