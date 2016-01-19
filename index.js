@@ -60,7 +60,7 @@ plugin.profiles.forEach(function ( profile ) {
                             request.url.replace(/\//g, '/'.grey)
                         ].join('\t'),
                         title: plugin.entry,
-                        message: error ? [request.url, '\n', error.message] : request.url
+                        message: error ? [request.url, '', error.message] : request.url
                     });
                 });
             }).resume();
