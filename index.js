@@ -11,7 +11,6 @@ var http   = require('http'),
     path   = require('path'),
     util   = require('util'),
     open   = require('open'),
-    //glr    = require('gulp-livereload'),
     Plugin = require('spa-gulp/lib/plugin'),
     plugin = new Plugin({name: 'static', entry: 'serve', context: module}),
     ip     = require('ip').address();
@@ -92,18 +91,6 @@ plugin.profiles.forEach(function ( profile ) {
         });
 
         server.listen(profile.data.port);
-
-        /*if ( profile.data.livereload ) {
-            glr.listen({quiet: true, port: profile.data.livereload === true ? 35729 : profile.data.livereload});
-
-            // reload
-            gulp.watch([path.join(process.env.PATH_APP, '**', '*.{html,js,json,css}')]).on('change', function ( file ) {
-                // report
-                log('watch   '.bgCyan.black, 'reload ' + ('./' + path.relative(process.env.PATH_APP, file.path)).bold);
-                // reload
-                glr.changed(file);
-            });
-        }*/
     });
 
     // open page in browser

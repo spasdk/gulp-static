@@ -12,7 +12,6 @@
         "jsdoc": "jsdoc --destination doc *.js readme.md"
     },
     "dependencies": {
-        "gulp-livereload": "3.*.*",
         "ip": "1.*.*",
         "node-static": "0.*.*",
         "open": "0.*.*",
