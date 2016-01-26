@@ -7,9 +7,10 @@
 
 'use strict';
 
-var extend = require('extend'),
+var path   = require('path'),
+    extend = require('extend'),
     config = require('spa-gulp/config'),
-    path   = config.default.target.replace(/\\/g, '/');
+    dir    = config.default.target.replace(/\\/g, '/');
 
 
 // base config
@@ -20,7 +21,7 @@ module.exports = extend(true, {}, config, {
         source: '.',
 
         // main entry point to load web page
-        target: 'http://${host}:${port}/' + path + '/index.html',
+        target: 'http://${host}:${port}/' + dir + '/index.html',
 
         // listening HTTP port to serve project files
         port: 'auto',
@@ -32,10 +33,25 @@ module.exports = extend(true, {}, config, {
         // enable automatic reload on file changes mode
         // set boolean value "true" to work on the default port 35729
         // or specify some custom port value
-        livereload: true
+        livereload: true,
+
+        // info channels
+        notifications: {
+            popup: {
+                info: {
+                    icon: path.join(__dirname, 'media', 'info.png')
+                },
+                warn: {
+                    icon: path.join(__dirname, 'media', 'warn.png')
+                },
+                fail: {
+                    icon: path.join(__dirname, 'media', 'fail.png')
+                }
+            }
+        }
     },
 
     develop: {
-        target: 'http://${host}:${port}/' + path + '/develop.html'
+        target: 'http://${host}:${port}/' + dir + '/develop.html'
     }
 });
