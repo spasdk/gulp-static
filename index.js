@@ -67,6 +67,7 @@ plugin.profiles.forEach(function ( profile ) {
         });
 
         server.on('listening', function () {
+            // port can be 0 from the start
             profile.data.port = server.address().port;
 
             // report
