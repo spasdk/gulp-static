@@ -17,12 +17,12 @@ var http   = require('http'),
 
 
 // rework profile
-plugin.prepare = function ( name ) {
-    var profile = this.config[name];
-
-    profile.target = profile.target.replace(/\$\{host}/g, ip);
-    profile.target = profile.target.replace(/\$\{port}/g, profile.port);
-};
+//plugin.prepare = function ( name ) {
+//    var profile = this.config[name];
+//
+//    profile.target = profile.target.replace(/\$\{host}/g, ip);
+//    profile.target = profile.target.replace(/\$\{port}/g, profile.port);
+//};
 
 
 // create tasks for profiles
@@ -31,7 +31,7 @@ plugin.profiles.forEach(function ( profile ) {
         server;
 
     // correct target
-    plugin.prepare(profile.name);
+    //plugin.prepare(profile.name);
 
     // main entry task
     profile.task(plugin.entry, function ( done ) {
@@ -67,13 +67,16 @@ plugin.profiles.forEach(function ( profile ) {
         });
 
         server.on('listening', function () {
+            profile.data.port = server.address().port;
+
+            // report
             profile.notify({
                 info: [
-                    'serve '.green + srcDir.bold + ' at '.green + profile.data.port,
-                    'entry '.green + profile.data.target.blue
+                    'serve '.green + srcDir.bold + ' on port '.green + profile.data.port,
+                    'entry '.green + util.format('http://%s:%s/%s', ip, profile.data.port, profile.data.target).blue
                 ],
                 title: plugin.entry,
-                message: util.format('serve %s\nat %s', srcDir, ip + ':' + profile.data.port)
+                message: util.format('serve %s\non port %s', srcDir, ip + ':' + profile.data.port)
             });
         });
 

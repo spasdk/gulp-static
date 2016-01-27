@@ -10,19 +10,20 @@
 var path     = require('path'),
     extend   = require('extend'),
     config   = require('spa-gulp/config'),
+    jade     = require('spa-gulp-jade/config'),
     profiles = {};
 
 
 // main
 profiles.default = extend(true, {}, config, {
     // directory to serve
-    source: '.',
+    source: path.dirname(jade.default.target),
 
     // main entry point to load web page
-    target: 'http://${host}:${port}/index.html',
+    target: path.basename(jade.default.target),
 
-    // listening HTTP port to serve project files
-    port: 'auto',
+    // listening port (0 - random)
+    port: 0,
 
     // static file server cache activation
     // false to disable or amount of seconds to cache
@@ -40,8 +41,12 @@ profiles.default = extend(true, {}, config, {
 
 
 profiles.develop = extend(true, {}, profiles.default, {
+    // directory to serve
+    source: '.',
+
     // main entry point to load web page
-    target: 'http://${host}:${port}/' + config.target.replace(/\\/g, '/') + '/develop.html',
+    //target: config.target.replace(/\\/g, '/') + '/develop.html',
+    target: jade.develop.target.replace(/\\/g, '/'),
 
     // static file server cache activation
     // false to disable or amount of seconds to cache
