@@ -15,7 +15,7 @@
         "ip": "1.*.*",
         "node-static": "0.*.*",
         "open": "0.*.*",
-        "spa-gulp": "1.*.*"
+        "spa-gulp": "spasdk/gulp"
     },
     "keywords": [
         "spa",
