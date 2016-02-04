@@ -11,8 +11,12 @@ var http   = require('http'),
     path   = require('path'),
     util   = require('util'),
     open   = require('open'),
-    Plugin = require('spa-gulp/lib/plugin'),
-    plugin = new Plugin({name: 'static', entry: 'serve', context: module}),
+    Plugin = require('spasdk/lib/plugin'),
+    plugin = new Plugin({
+        name: 'static',
+        entry: 'serve',
+        config: require('./config')
+    }),
     ip     = require('ip').address();
 
 
@@ -72,10 +76,7 @@ plugin.profiles.forEach(function ( profile ) {
 
             // report
             profile.notify({
-                info: [
-                    'serve '.green + srcDir.bold + ' on port '.green + profile.data.port,
-                    'entry '.green + util.format('http://%s:%s/%s', ip, profile.data.port, profile.data.target).blue
-                ],
+                info: 'serve '.green + srcDir.bold + ' with entry '.green + util.format('http://%s:%s/%s', ip, profile.data.port, profile.data.target).blue,
                 title: plugin.entry,
                 message: util.format('serve %s\non port %s', srcDir, ip + ':' + profile.data.port)
             });
