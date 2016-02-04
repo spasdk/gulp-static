@@ -1,12 +1,12 @@
 {
-    "name": "spa-gulp-static",
+    "name": "spa-plugin-static",
     "version": "1.3.0",
     "description": "Serve project files with HTTP static file server.",
     "author": {
         "name": "Stanislav Kalashnik",
         "email": "darkpark.main@gmail.com"
     },
-    "repository": "spasdk/gulp-static",
+    "repository": "spasdk/plugin-static",
     "scripts": {
         "lint": "eslint *.js",
         "jsdoc": "jsdoc --destination doc *.js readme.md"
