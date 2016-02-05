@@ -12,11 +12,7 @@ var http   = require('http'),
     util   = require('util'),
     open   = require('open'),
     Plugin = require('spasdk/lib/plugin'),
-    plugin = new Plugin({
-        name: 'static',
-        entry: 'serve',
-        config: require('./config')
-    }),
+    plugin = new Plugin({name: 'static', entry: 'serve', config: require('./config')}),
     ip     = require('ip').address();
 
 
