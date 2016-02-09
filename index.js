@@ -40,8 +40,8 @@ plugin.profiles.forEach(function ( profile ) {
             request.addListener('end', function () {
                 // static files
                 files.serve(request, response, function serve ( error ) {
-                    var address = request.connection.remoteAddress || '[0.0.0.0]'.red,
-                        status  = response.statusCode === 200 ? response.statusCode.toString().green : response.statusCode.toString().yellow;
+                    var address = request.connection.remoteAddress || '[0.0.0.0]',
+                        status  = response.statusCode === 200 ? response.statusCode : response.statusCode;
 
                     if ( error ) {
                         response.end();
@@ -50,15 +50,14 @@ plugin.profiles.forEach(function ( profile ) {
                     // single file serving report
                     profile.notify({
                         type: error ? 'fail' : 'info',
-                        info: [
-                            address.replace('::ffff:', '').replace(/\./g, '.'.grey),
-                            (+new Date()).toString().substr(-3).grey,
-                            error ? error.status.toString().red : status,
-                            request.method.grey,
-                            request.url.replace(/\//g, '/'.grey)
-                        ].join('\t'),
                         title: plugin.entry,
-                        message: error ? [request.url, '', error.message] : request.url
+                        message: [
+                            address.replace('::ffff:', ''),
+                            (+new Date()).toString().substr(-3),
+                            error ? error.status : status,
+                            request.method,
+                            request.url
+                        ].join('\t')
                     });
                 });
             }).resume();
@@ -70,9 +69,8 @@ plugin.profiles.forEach(function ( profile ) {
 
             // report
             profile.notify({
-                info: 'serve '.green + srcDir.bold + ' with entry '.green + util.format('http://%s:%s/%s', ip, profile.data.port, profile.data.target).blue,
                 title: plugin.entry,
-                message: util.format('serve %s\non port %s', srcDir, ip + ':' + profile.data.port)
+                message: util.format('serve %s with entry http://%s:%s/%s', srcDir, ip, profile.data.port, profile.data.target)
             });
         });
 
@@ -100,7 +98,6 @@ plugin.profiles.forEach(function ( profile ) {
     profile.task('stop', function () {
         if ( server ) {
             profile.notify({
-                info: 'stop '.green + srcDir.bold,
                 title: 'stop',
                 message: 'stop ' + srcDir
             });
