@@ -51,7 +51,7 @@ plugin.profiles.forEach(function ( profile ) {
                     profile.notify({
                         type: error ? 'fail' : 'info',
                         title: plugin.entry,
-                        message: [
+                        info: [
                             address.replace('::ffff:', ''),
                             (+new Date()).toString().substr(-3),
                             error ? error.status : status,
@@ -70,7 +70,7 @@ plugin.profiles.forEach(function ( profile ) {
             // report
             profile.notify({
                 title: plugin.entry,
-                message: util.format('serve %s with entry http://%s:%s/%s', srcDir, ip, profile.data.port, profile.data.target)
+                info: util.format('serve %s with entry http://%s:%s/%s', srcDir, ip, profile.data.port, profile.data.target)
             });
         });
 
@@ -80,6 +80,7 @@ plugin.profiles.forEach(function ( profile ) {
             profile.notify({
                 type: 'fail',
                 title: plugin.entry,
+                info: 'static error',
                 message: error.message
             });
 
@@ -98,7 +99,7 @@ plugin.profiles.forEach(function ( profile ) {
         if ( server ) {
             profile.notify({
                 title: 'stop',
-                message: 'stop ' + srcDir
+                info: 'stop ' + srcDir
             });
 
             server.close();
