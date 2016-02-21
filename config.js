@@ -44,6 +44,8 @@ profiles.develop = extend(true, {}, profiles.default, {
     // main entry point to load web page
     target: config.target.replace(/\\/g, '/') + '/develop.html',
 
+    port: 8080,
+
     // static file server cache activation
     // false to disable or amount of seconds to cache
     cache: false
