@@ -11,7 +11,7 @@ var http   = require('http'),
     open   = require('open'),
     Plugin = require('spasdk/lib/plugin'),
     plugin = new Plugin({name: 'static', entry: 'serve', config: require('./config')}),
-    ip     = require('ip').address();
+    app    = require('spasdk/lib/app');
 
 
 // rework profile
@@ -70,7 +70,7 @@ plugin.profiles.forEach(function ( profile ) {
             // report
             profile.notify({
                 title: plugin.entry,
-                info: util.format('serve %s with entry http://%s:%s/%s', srcDir, ip, profile.data.port, profile.data.target)
+                info: util.format('serve %s with entry http://%s:%s/%s', srcDir, app.ip, profile.data.port, profile.data.target)
             });
         });
 
