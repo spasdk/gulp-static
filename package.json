@@ -20,9 +20,8 @@
         "spa",
         "spasdk",
         "framework",
-        "gulp",
         "develop",
-        "task",
+        "plugin",
         "static",
         "server",
         "http"
