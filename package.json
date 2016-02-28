@@ -14,7 +14,8 @@
     "dependencies": {
         "extend": "3.*.*",
         "node-static": "0.*.*",
-        "open": "0.*.*"
+        "open": "0.*.*",
+        "spa-plugin": "spasdk/plugin"
     },
     "keywords": [
         "spa",

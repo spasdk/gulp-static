@@ -7,7 +7,7 @@
 
 var path     = require('path'),
     extend   = require('extend'),
-    config   = require('spasdk/config'),
+    config   = require('spa-plugin/config'),
     profiles = {};
 
 
@@ -22,8 +22,7 @@ profiles.default = extend(true, {}, config, {
     // listening port (0 - random)
     port: 0,
 
-    // static file server cache activation
-    // false to disable or amount of seconds to cache
+    // amount of seconds to cache static files
     cache: 3600,
 
     // info channels
@@ -46,8 +45,7 @@ profiles.develop = extend(true, {}, profiles.default, {
 
     port: 8080,
 
-    // static file server cache activation
-    // false to disable or amount of seconds to cache
+    // disable static files caching
     cache: false
 });
 
