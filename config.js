@@ -12,7 +12,7 @@ var path     = require('path'),
 
 
 // main
-profiles.default = extend(true, {}, config, {
+profiles.release = extend(true, {}, config, {
     // directory to serve
     source: config.target,
 
@@ -36,7 +36,7 @@ profiles.default = extend(true, {}, config, {
 });
 
 
-profiles.develop = extend(true, {}, profiles.default, {
+profiles.develop = extend(true, {}, profiles.release, {
     // directory to serve
     source: '.',
 
