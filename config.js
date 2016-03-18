@@ -17,7 +17,7 @@ profiles.release = extend(true, {}, config, {
     source: config.target,
 
     // main entry point to load web page
-    target: 'index.html',
+    target: 'release.html',
 
     // listening port (0 - random)
     port: 0,
