@@ -11,8 +11,51 @@ var path     = require('path'),
     profiles = {};
 
 
-// main
-profiles.release = extend(true, {}, config, {
+// app develop + release
+profiles.default = extend(true, {}, config, {
+    // directory to serve
+    source: '.',
+
+    // main entry point to load web page
+    target: path.join(config.target, 'develop.html?wampPort=9000'),
+
+    // listening port (0 - random)
+    port: 8080,
+
+    // amount of seconds to cache static files
+    cache: false,
+
+    // info channels
+    notifications: {
+        popup: {
+            info: {icon: path.join(__dirname, 'media', 'info.png')},
+            warn: {icon: path.join(__dirname, 'media', 'warn.png')},
+            fail: {icon: path.join(__dirname, 'media', 'fail.png')}
+        }
+    }
+});
+
+
+// management
+profiles.webui = extend(true, {}, profiles.default, {
+    // directory to serve
+    source: path.join(path.dirname(require.resolve('spa-webui')), 'app'),
+
+    // main entry point to load web page
+    target: 'release.html?wampPort=9000',
+
+    port: 8000,
+
+    // info channels
+    notifications: {
+        webui: {
+            info: false
+        }
+    }
+});
+
+
+/*profiles.release = extend(true, {}, config, {
     // directory to serve
     source: config.target,
 
@@ -20,7 +63,7 @@ profiles.release = extend(true, {}, config, {
     target: 'release.html',
 
     // listening port (0 - random)
-    port: 0,
+    port: 8090,
 
     // amount of seconds to cache static files
     cache: 3600,
@@ -47,7 +90,7 @@ profiles.develop = extend(true, {}, profiles.release, {
 
     // disable static files caching
     cache: false
-});
+});/**/
 
 
 // public
