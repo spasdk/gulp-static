@@ -18,7 +18,8 @@
         "extend": "3.*.*",
         "node-static": "0.*.*",
         "open": "0.*.*",
-        "spa-plugin": "spasdk/plugin"
+        "spa-plugin": "spasdk/plugin",
+        "spa-webui": "spasdk/webui"
     },
     "devDependencies": {
         "spa-eslint-config": "spasdk/eslint-config"
