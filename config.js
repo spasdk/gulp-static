@@ -42,7 +42,7 @@ profiles.webui = extend(true, {}, profiles.default, {
     source: path.join(path.dirname(require.resolve('spa-webui')), 'app'),
 
     // main entry point to load web page
-    target: 'release.html?wampPort=9000',
+    target: 'index.html?wampPort=9000',
 
     port: 8000,
 
