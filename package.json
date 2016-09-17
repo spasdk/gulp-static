@@ -11,7 +11,8 @@
         "url": "https://github.com/spasdk/plugin-static.git"
     },
     "scripts": {
-        "lint": "eslint *.js",
+        "lint": "eslint .",
+        "test": "npm run lint",
         "jsdoc": "jsdoc --destination doc *.js readme.md"
     },
     "dependencies": {
@@ -22,6 +23,7 @@
         "spa-webui": "spasdk/webui"
     },
     "devDependencies": {
+        "eslint": "2.*.*",
         "spa-eslint-config": "spasdk/eslint-config"
     },
     "keywords": [
