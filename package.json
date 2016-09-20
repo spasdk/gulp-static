@@ -23,7 +23,7 @@
         "spa-webui": "spasdk/webui"
     },
     "devDependencies": {
-        "eslint": "2.*.*",
+        "eslint": "3.*.*",
         "spa-eslint-config": "spasdk/eslint-config"
     },
     "keywords": [
