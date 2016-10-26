@@ -19,7 +19,7 @@
         "extend": "3.*.*",
         "node-static": "0.*.*",
         "open": "0.*.*",
-        "spa-plugin": "spasdk/plugin",
+        "spa-plugin": "1.*.*",
         "spa-webui": "spasdk/webui"
     },
     "devDependencies": {
