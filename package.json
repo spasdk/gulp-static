@@ -1,6 +1,6 @@
 {
     "name": "spa-plugin-static",
-    "version": "1.3.0",
+    "version": "1.0.0",
     "description": "Serve project files with HTTP static file server.",
     "author": {
         "name": "Stanislav Kalashnik",
@@ -20,7 +20,7 @@
         "node-static": "0.*.*",
         "open": "0.*.*",
         "spa-plugin": "1.*.*",
-        "spa-webui": "spasdk/webui"
+        "spa-webui": "1.*.*"
     },
     "devDependencies": {
         "eslint": "3.*.*",
